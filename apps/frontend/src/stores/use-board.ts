@@ -1,6 +1,6 @@
-import { ref, watch } from 'vue'
-import { defineStore } from 'pinia'
 import * as vueuse from '@vueuse/core'
+import { defineStore } from 'pinia'
+import { ref, watch } from 'vue'
 import { useGame } from './use-game.js'
 import type { AlchemyElementOnBoard } from '@/types.js'
 
@@ -15,7 +15,7 @@ export const useBoard = defineStore('board', () => {
     board.value = game.basicElements?.map((element) => {
       return {
         ...element,
-        position: game.getRandomPosition()
+        position: game.getRandomPosition(),
       }
     })
   }

@@ -1,68 +1,10 @@
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig, type Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { defineConfig, type Plugin } from 'vite'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 
-import { HttpProxy } from 'vite'
-
-type ProxyLogType = 'none' | 'base' | 'all'
-
-const configurationByType: Record<ProxyLogType, (proxy: HttpProxy.Server) => void> = {
-  all: (proxy: HttpProxy.Server) => {
-    proxy.on('error', (err) => {
-      console.log('proxy error', err)
-    })
-    proxy.on('proxyReq', (proxyReq, req) => {
-      console.log(
-        'proxy:',
-        req.method,
-        req.url,
-        ' ==> ',
-        `${proxyReq.method}  ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`,
-        JSON.stringify(proxyReq.getHeaders(), null, '  '),
-      )
-    })
-    proxy.on('proxyRes', (proxyRes, req) => {
-      console.log(
-        'proxy result:',
-        proxyRes.statusCode,
-        req.url,
-        JSON.stringify(proxyRes.headers, null, '  '),
-      )
-    })
-  },
-  none: () => {},
-  base: (proxy: HttpProxy.Server) => {
-    proxy.on('error', (err) => {
-      console.log('proxy error', err)
-    })
-    proxy.on('proxyReq', (proxyReq, req) => {
-      console.log(
-        'proxy: ',
-        req.method,
-        req.url,
-        ' ==> ',
-        `${proxyReq.method}  ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`,
-      )
-    })
-    proxy.on('proxyRes', (proxyRes, req) => {
-      console.log('proxy result:', proxyRes.statusCode, req.url)
-    })
-  },
-}
-
 export default defineConfig({
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:3000/api',
-        changeOrigin: true,
-        configure: configurationByType.base,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  },
   plugins: [
     vue(),
     viteSingleFile(),
@@ -70,8 +12,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   build: {
     target: 'esnext',
@@ -79,11 +21,17 @@ export default defineConfig({
     modulePreload: false,
     terserOptions: {
       format: {
-        comments: false
-      }
-    }
+        comments: false,
+      },
+    },
   },
 })
+
+interface Replacer {
+  variableName: string
+  regexp: RegExp
+  code: string
+}
 
 function replaceSvgUrl(): Plugin {
   const urls = [
@@ -93,15 +41,16 @@ function replaceSvgUrl(): Plugin {
     'http://www.w3.org/1999/xlink',
   ]
 
-  function createUrlReplacer(url: string) {
+  function createUrlReplacer(url: string): Replacer {
     const regexp = new RegExp(url, 'g')
     const base64 = btoa(url)
-    const variableName = url.split('/').at(-1)
+    const variableName = url.split('/').at(-1)!
     const code = `const __${variableName}__ = atob('${base64}');`
+
     return {
       variableName,
       regexp,
-      code
+      code,
     }
   }
 
@@ -112,20 +61,24 @@ function replaceSvgUrl(): Plugin {
       for (const bundleIndex in bundle) {
         const file = bundle[bundleIndex]
         if (file.type === 'chunk') {
-          const replacers = []
+          const replacers: Replacer[] = []
           for (const url of urls) {
             replacers.push(createUrlReplacer(url))
           }
 
-          let replacedFile = file.code
+          let code = file.code
           for (const replacer of replacers) {
-            replacedFile = replacedFile
-              .replaceAll(replacer.regexp, `"+__${replacer.variableName}__+"`)
+            code = code.replaceAll(
+              replacer.regexp,
+              `"+__${replacer.variableName}__+"`,
+            )
           }
 
-          file.code = replacers.map((replacer) => replacer.code).join('') + replacedFile
+          file.code = replacers
+            .map((replacer) => replacer.code)
+            .join('') + code
         }
       }
-    }
+    },
   }
 }

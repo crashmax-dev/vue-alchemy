@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export const useGuide = defineStore('guide', () => {
   const isOpen = ref(false)
@@ -15,6 +15,6 @@ export const useGuide = defineStore('guide', () => {
   return {
     isOpen,
     closeGuide,
-    toggleGuide
+    toggleGuide,
   }
 })

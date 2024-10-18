@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useBoard } from '@/stores/use-board'
 import { sprites } from '@/assets/sprites'
+import { useBoard } from '@/stores/use-board'
+import { computed } from 'vue'
 import type { AlchemyElement } from '@/types.js'
 
 defineProps<{
@@ -15,8 +15,8 @@ const height = computed(() => `${game.elementSize.height}px`)
 
 <template>
   <div class="item">
-    <img class="image" :src="sprites[element.id]" />
-    <p :class="['text', { ended: element.ended }]">
+    <img class="image" :src="sprites[element.id]">
+    <p class="text" :class="[{ ended: element.ended }]">
       {{ element.name }}
     </p>
   </div>

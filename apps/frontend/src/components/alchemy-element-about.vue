@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { sprites } from '@/assets/sprites'
+import { useElementAbout } from '@/stores/use-element-about'
 import Drawer from '@/ui/drawer/drawer.vue'
 import DrawerBody from '@/ui/drawer/drawer-body.vue'
 import DrawerHeader from '@/ui/drawer/drawer-header.vue'
-import { useElementAbout } from '@/stores/use-element-about'
-import { sprites } from '@/assets/sprites'
 import AlchemyItem from './alchemy-item.vue'
 
 const elementAbout = useElementAbout()
@@ -22,7 +22,7 @@ const elementAbout = useElementAbout()
             <img
               class="image"
               :src="sprites[elementAbout.activeElement.id]"
-            />
+            >
             <p class="description">
               {{ elementAbout.activeElement.description }}
             </p>
@@ -32,8 +32,8 @@ const elementAbout = useElementAbout()
             <h2>Доступные рецепты</h2>
             <div
               v-for="(recipe, index) of elementAbout.activeElement.recipes"
-              class="recipe"
               :key="index"
+              class="recipe"
             >
               <div class="element" @click="elementAbout.openElementAbout(recipe[0])">
                 <AlchemyItem :element="recipe[0]" />

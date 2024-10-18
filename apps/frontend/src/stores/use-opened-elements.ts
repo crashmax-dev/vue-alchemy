@@ -1,9 +1,9 @@
-import { computed, watchEffect } from 'vue'
-import { defineStore } from 'pinia'
+import recipes from '@/assets/recipes.json'
 import * as vueuse from '@vueuse/core'
+import { defineStore } from 'pinia'
+import { computed, watchEffect } from 'vue'
 import { useGame } from './use-game.js'
 import { useSounds } from './use-sounds.js'
-import recipes from '@/assets/recipes.json'
 import type { AlchemyElement } from '@/types.js'
 
 type OpenedAlchemyElements = Omit<AlchemyElement, 'uuid'>[]
@@ -12,7 +12,8 @@ export const useOpenedElements = defineStore('opened-elements', () => {
   const game = useGame()
   const sounds = useSounds()
   const openedElements = vueuse.useStorage<OpenedAlchemyElements>(
-    'alchemy-opened-elements', []
+    'alchemy-opened-elements',
+    [],
   )
 
   const elementsCounter = computed(() => {
@@ -42,7 +43,7 @@ export const useOpenedElements = defineStore('opened-elements', () => {
     openedElements.value.push({
       id: element.id,
       name: element.name,
-      ended: element.ended
+      ended: element.ended,
     })
   }
 
@@ -52,7 +53,7 @@ export const useOpenedElements = defineStore('opened-elements', () => {
       return {
         id: element.id,
         name: element.name,
-        ended: element.ended
+        ended: element.ended,
       }
     })
   })
@@ -62,6 +63,6 @@ export const useOpenedElements = defineStore('opened-elements', () => {
     elementsCounter,
     $reset,
     addElement,
-    isCreatedElement
+    isCreatedElement,
   }
 })

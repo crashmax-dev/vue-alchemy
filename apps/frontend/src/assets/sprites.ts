@@ -1071,5 +1071,5 @@ export const sprites: Record<string, string> = {
   worm,
   xray,
   yarn,
-  zombie
+  zombie,
 }

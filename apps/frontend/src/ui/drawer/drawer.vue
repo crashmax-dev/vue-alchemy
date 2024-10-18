@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { computed, provide, ref, shallowRef, useAttrs, watch } from 'vue'
+import { computed, provide, ref, shallowRef, watch } from 'vue'
 
 import { drawerInjectionKey } from './drawer-injection-key'
 
@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   maxWidth: 'auto',
   placement: 'right',
-  ignoreElement: () => []
+  ignoreElement: () => [],
 })
 
 const drawerStyles = computed(() => {
@@ -49,7 +49,7 @@ watch(openModel, (value) => {
 
 const contentElement = shallowRef<HTMLElement>()
 onClickOutside(contentElement, () => (openModel.value = false), {
-  ignore: props.ignoreElement
+  ignore: props.ignoreElement,
 })
 
 function toggleDrawer() {

@@ -1,6 +1,6 @@
-import { el } from '@zero-dependency/dom'
-
 import freakGames from '@/assets/freak-games.mp3'
+
+import { el } from '@zero-dependency/dom'
 
 class SplashScreen {
   #el: HTMLDivElement | null = null
@@ -60,9 +60,9 @@ class SplashScreen {
                 this.#el?.remove()
                 this.#el = null
               }
-            }
+            },
           },
-          el('div', { className: 'logo' })
+          el('div', { className: 'logo' }),
         )
         document.body.prepend(this.#el)
       })
@@ -75,9 +75,9 @@ class SplashScreen {
               this.#el?.remove()
               this.#el = null
               this.init()
-            }
+            },
           },
-          el('h4', 'Click to start')
+          el('h4', 'Click to start'),
         )
         document.body.prepend(this.#el)
       })
@@ -89,16 +89,15 @@ class SplashScreen {
   }
 
   #playAudio() {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       try {
         const audio = new Audio(freakGames)
         audio.volume = 1
         audio.playbackRate = 0.9
         audio.addEventListener('ended', () => this.destroy())
-        await audio.play()
-        resolve()
+        resolve(audio.play())
       } catch {
-        reject()
+        reject(new Error('Failed to play audio'))
       }
     })
   }

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { useOpenedElements } from '@/stores/use-opened-elements'
+import { storeToRefs } from 'pinia'
 
 const { elementsCounter } = storeToRefs(useOpenedElements())
 </script>
 
 <template>
-  <div class="counter">{{ elementsCounter }}</div>
+  <div class="counter">
+    {{ elementsCounter }}
+  </div>
 </template>
 
 <style scoped>

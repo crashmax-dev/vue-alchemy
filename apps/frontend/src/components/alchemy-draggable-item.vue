@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import AlchemyItem from './alchemy-item.vue'
-import { computed, onMounted, ref, watch } from 'vue'
-import { clamp, useDraggable, useElementBounding } from '@vueuse/core'
 import { useSounds } from '@/stores/use-sounds'
+import { clamp, useDraggable, useElementBounding } from '@vueuse/core'
+import { computed, ref, watch } from 'vue'
+import AlchemyItem from './alchemy-item.vue'
 import type { AlchemyElementOnBoard, Position } from '@/types.js'
 
 const props = defineProps<{
-  alchemyElement: AlchemyElementOnBoard,
+  alchemyElement: AlchemyElementOnBoard
   boardBounding: ReturnType<typeof useElementBounding>
 }>()
 
 const emits = defineEmits<{
-  'position': [Position],
-  'clone-element': [AlchemyElementOnBoard],
+  'position': [Position]
+  'clone-element': [AlchemyElementOnBoard]
   'remove-element': [AlchemyElementOnBoard]
 }>()
 
@@ -26,15 +26,16 @@ const { position } = useDraggable(element, {
     sounds.takingAudio.play()
   },
   onEnd() {
+    // eslint-disable-next-line ts/no-use-before-define
     emits('position', { x: xPosition.value, y: yPosition.value })
-  }
+  },
 })
 
 const xPosition = computed(() => {
   return clamp(
     props.boardBounding.left.value,
     position.value.x,
-    props.boardBounding.right.value - width.value
+    props.boardBounding.right.value - width.value,
   )
 })
 
@@ -42,7 +43,7 @@ const yPosition = computed(() => {
   return clamp(
     props.boardBounding.top.value,
     position.value.y,
-    props.boardBounding.bottom.value - height.value
+    props.boardBounding.bottom.value - height.value,
   )
 })
 
@@ -59,7 +60,7 @@ watch(() => props.alchemyElement.position, () => {
     @dblclick="emits('clone-element', alchemyElement)"
     @contextmenu.prevent="emits('remove-element', alchemyElement)"
   >
-    <AlchemyItem v-bind:element="alchemyElement" />
+    <AlchemyItem :element="alchemyElement" />
   </div>
 </template>
 
